@@ -1,0 +1,54 @@
+# --- 编译输出 ---
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Maven构建输出目录
+target/
+# Gradle构建输出目录
+build/
+
+# --- 依赖管理 ---
+# Maven本地仓库（谨慎使用，通常不提交）
+# repository/
+
+# Gradle缓存
+.gradle/
+
+# --- IDE相关 ---
+# IntelliJ IDEA（常用Java IDE）
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code配置（可选排除）
+.vscode/
+# 但通常建议保留 .vscode/settings.json 中的团队共享配置
+# 使用注释单独排除特定文件
+# !.vscode/settings.json
+
+# Eclipse
+.settings/
+.project
+.classpath
+*.launch
+
+# NetBeans
+nbproject/
+nbactions.xml
+
+# --- 系统文件 ---
+.DS_Store
+Thumbs.db
+
+# --- 日志文件 ---
+logs/
+*.log
+
+# --- 环境配置 ---
+*.properties
+.env
+*.cfg
