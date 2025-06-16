@@ -4,7 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import Client.IOClient;
+import Client.rpcClient.RpcClient;
+import Client.rpcClient.impl.NettyRpcClient;
+import Client.rpcClient.impl.SimpleSocketRpcClient;
 import common.Message.RpcRequest;
 import common.Message.RpcResponse;
 import lombok.AllArgsConstructor;
@@ -12,9 +14,22 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ClientProxy implements InvocationHandler {
 
-    private String host;
-    
-    private int port;
+    private RpcClient rpcClient;
+
+    public ClientProxy(String host, int port) {
+        rpcClient = new NettyRpcClient(host, port);
+    }
+
+    public ClientProxy(String host, int port, int choose) {
+        switch(choose) {
+            case 0:
+                rpcClient = new NettyRpcClient(host, port);
+                break;
+            case 1:
+                rpcClient = new SimpleSocketRpcClient(host, port);
+                break;
+        }
+    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -24,7 +39,7 @@ public class ClientProxy implements InvocationHandler {
                                         .params(args)
                                         .paramsType(method.getParameterTypes())
                                         .build();
-        RpcResponse response = IOClient.sendRequest(host, port, request);
+        RpcResponse response = rpcClient.sendRequest(request);
         return response.getData();
     }
 

@@ -7,7 +7,6 @@ import common.service.UserService;
 public class TestClient {
 
     public static void main(String[] args) {
-        System.out.println("1");
         ClientProxy clientProxy = new ClientProxy("127.0.0.1", 9999);
         UserService proxy = clientProxy.getProxy(UserService.class);
 
