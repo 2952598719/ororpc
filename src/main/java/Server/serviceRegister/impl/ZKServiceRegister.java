@@ -2,7 +2,6 @@ package Server.serviceRegister.impl;
 
 import java.net.InetSocketAddress;
 
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -12,18 +11,17 @@ import Server.serviceRegister.ServiceRegister;
 
 public class ZKServiceRegister implements ServiceRegister {
 
-    private CuratorFramework client;
+    private CuratorFramework client;    // ZK连接客户端
 
     private static final String ZK_PATH = "127.0.0.1:2181";
 
     private static final String ROOT_PATH = "MyRPC";
 
     public ZKServiceRegister() {
-        RetryPolicy policy = new ExponentialBackoffRetry(1000, 3);
         client = CuratorFrameworkFactory.builder()
                                         .connectString(ZK_PATH)
-                                        .sessionTimeoutMs(40000)
-                                        .retryPolicy(policy)
+                                        .sessionTimeoutMs(40000)    // Server和zk的连接session在40s没通信后关闭
+                                        .retryPolicy(new ExponentialBackoffRetry(1000, 3))
                                         .namespace(ROOT_PATH)
                                         .build();
         client.start();
@@ -33,20 +31,15 @@ public class ZKServiceRegister implements ServiceRegister {
     @Override
     public void registerService(String serviceName, InetSocketAddress serviceAddress) {
         try {
-            // 这个路径像是瞎写的，咋眼一看是/user/127.0.0.1:80，离天下之大谱，还有反过来写的
-            // 但其实背后有目的，这里的/不是路径分隔符，是为了将serviceName创建成永久节点，服务提供者下线时，不删服务名，只删地址
-            if(client.checkExists().forPath("/" + serviceName) == null) {
-                client.create()
-                        .creatingParentContainersIfNeeded()
-                        .withMode(CreateMode.PERSISTENT)
-                        .forPath("/" + serviceName);
-            }
+            // zk理解成一个文件夹就好
+            // 比如说先create一个/service，接着create一个/service/a，create一个/service/b，那么此时的结构就是service下有a和b两个节点
+            // 不要理解成map的形式，不会相互覆盖
+
             String path = "/" + serviceName + "/" + getServiceAddress(serviceAddress);
             client.create()
-                .creatingParentContainersIfNeeded()
-                .withMode(CreateMode.EPHEMERAL)
+                .creatingParentContainersIfNeeded()         // 递归创建，比如路径是/service/a，如果没有service节点就会自动创建。注意自动创建的父节点是持久的
+                .withMode(CreateMode.EPHEMERAL)             // 临时节点，服务器和zk的连接断开后就删除
                 .forPath(path);
-
         } catch(Exception e) {
             e.printStackTrace();
         }

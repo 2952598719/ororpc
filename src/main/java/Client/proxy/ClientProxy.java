@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import Client.rpcClient.RpcClient;
-import Client.rpcClient.impl.NettyRpcClient;
 import common.Message.RpcRequest;
 import common.Message.RpcResponse;
 import lombok.AllArgsConstructor;
@@ -14,10 +13,6 @@ import lombok.AllArgsConstructor;
 public class ClientProxy implements InvocationHandler {
 
     private RpcClient rpcClient;
-
-    public ClientProxy() {
-        rpcClient = new NettyRpcClient();
-    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -31,6 +26,7 @@ public class ClientProxy implements InvocationHandler {
         return response.getData();
     }
 
+    @SuppressWarnings("unchecked")
     public <T>T getProxy(Class<T> clazz) {
         Object o = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, this);
         return (T)o;

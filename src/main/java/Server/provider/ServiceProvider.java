@@ -24,9 +24,9 @@ public class ServiceProvider {
         this.serviceRegister = new ZKServiceRegister();
     }
 
-    // 注册服务到本地
+    // 注册服务
     public void provideServiceInterface(Object service) {
-        String serviceName = service.getClass().getName();
+        // 这个类可能会实现多个接口，把每个接口都注册一下，这样就都能调用到了
         Class<?>[] interfaceName = service.getClass().getInterfaces();
         for(Class<?> clazz : interfaceName) {
             interfaceProvider.put(clazz.getName(), service);    // 一方面注册到本机
