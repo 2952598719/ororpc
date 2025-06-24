@@ -14,6 +14,7 @@ public class TokenBucketRateLimitImpl implements RateLimit {
     private final AtomicInteger tokenNum;       // 当前令牌数
 
     private final AtomicLong lastRefillTime;    // 上次生成令牌的时间
+    private long tokensToAdd;
 
     public TokenBucketRateLimitImpl(int ratePerSecond, int capacity) {
         this.tokenInterval = 1000 / ratePerSecond;
@@ -36,7 +37,18 @@ public class TokenBucketRateLimitImpl implements RateLimit {
     }
 
     private void refillToken() {
-        
+        long now = System.currentTimeMillis();
+        long lastTime = lastRefillTime.get();
+        if(now - lastTime < tokenInterval) {    // 未到生成令牌的时间
+            return;
+        }
+        long tokensToAdd = (now - lastTime) / tokenInterval;
+        if(tokensToAdd > 0) {
+            long newRefillTime = lastTime + tokensToAdd * tokenInterval;    // 时间余量问题：因为token是离散生成的，当前可能是上一个token生成后的一小段时间后，如果以now作为上次生成时间，会导致这段时间被抛弃，生成的token就减少
+            if(lastRefillTime.compareAndSet(lastTime, newRefillTime)) {
+                tokenNum.updateAndGet(current -> Math.min(capacity, current + (int)tokensToAdd));
+            }
+        }
     }
     
 }
