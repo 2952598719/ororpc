@@ -29,10 +29,10 @@ public class RpcResponse implements Serializable {
                             .build();
     }
 
-    public static RpcResponse fail() {
+    public static RpcResponse fail(String msg) {
         return RpcResponse.builder()
                             .code(500)
-                            .message("服务器内部错误")
+                            .message(msg)
                             .build();
     }
     

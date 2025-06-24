@@ -1,22 +1,28 @@
-package top.orosirian.serializer.mySerializer.impl;
+package top.orosirian.serializer.myserializer.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+import top.orosirian.message.RpcRequest;
+import top.orosirian.message.RpcResponse;
+import top.orosirian.serializer.myserializer.Serializer;
 
-import common.Message.RpcRequest;
-import common.Message.RpcResponse;
-import common.serialize.mySerializer.Serializer;
-
+@Slf4j
 public class JsonSerializer implements Serializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        byte[] bytes = JSONObject.toJSONBytes(obj);     // 用第三方库很方便
-        return bytes;
+        if (obj == null) {
+            throw new IllegalArgumentException("序列化对象不能为空");
+        }
+        return JSONObject.toJSONBytes(obj);
     }
 
     @Override
     public Object deserialize(byte[] bytes, int messageType) {
+        if (bytes == null || bytes.length == 0) {
+            throw new IllegalArgumentException("反序列化数组不能为空");
+        }
         Object obj = null;
         switch (messageType) {
             case 0:         // Request
@@ -43,7 +49,7 @@ public class JsonSerializer implements Serializer {
                 Class<?> dataType = response.getDataType();
                 Object data = response.getData();
                 if(dataType.isAssignableFrom(data.getClass())) {
-                    
+
                 } else {
                     if(data instanceof JSONObject) {
                         response.setData(JSONObject.toJavaObject((JSONObject)data, dataType));
@@ -54,7 +60,7 @@ public class JsonSerializer implements Serializer {
                 obj = response;
                 break;
             default:
-                System.out.println("[] 暂时不支持此类数据");
+                log.error("[] 暂时不支持此类数据");
                 throw new RuntimeException();
         }
         return obj;

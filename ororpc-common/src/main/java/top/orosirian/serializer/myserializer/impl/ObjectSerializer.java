@@ -1,4 +1,7 @@
-package top.orosirian.serializer.mySerializer.impl;
+package top.orosirian.serializer.myserializer.impl;
+
+import top.orosirian.exception.SerializeException;
+import top.orosirian.serializer.myserializer.Serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,13 +9,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import common.serialize.mySerializer.Serializer;
-
 public class ObjectSerializer implements Serializer {
 
     @Override
     public byte[] serialize(Object obj) {
-        byte[] bytes = null;
+        if (obj == null) {
+            throw new IllegalArgumentException("序列化对象不能为空");
+        }
+        byte[] bytes;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -22,14 +26,17 @@ public class ObjectSerializer implements Serializer {
             bos.close();
             oos.close(); 
         } catch(IOException e) {
-            e.printStackTrace();
+            throw new SerializeException("序列化失败");
         }
         return bytes;
     }
 
     @Override
     public Object deserialize(byte[] bytes, int messageType) {
-        Object obj = null;
+        if (bytes == null || bytes.length == 0) {
+            throw new IllegalArgumentException("反序列化数组不能为空");
+        }
+        Object obj;
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(bis);
@@ -37,7 +44,7 @@ public class ObjectSerializer implements Serializer {
             bis.close();
             ois.close();
         } catch(IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new SerializeException("反序列化失败");
         }
         return obj;
     }
