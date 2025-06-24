@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import Server.ratelimit.provider.RateLimitProvider;
 import Server.serviceRegister.ServiceRegister;
 import Server.serviceRegister.impl.ZKServiceRegister;
 
@@ -17,11 +18,14 @@ public class ServiceProvider {
 
     private ServiceRegister serviceRegister;
 
+    private RateLimitProvider rateLimitProvider;
+
     public ServiceProvider(String host, int port) {
         this.host = host;
         this.port = port;
         this.interfaceProvider = new HashMap<>();
         this.serviceRegister = new ZKServiceRegister();
+        this.rateLimitProvider = new RateLimitProvider();
     }
 
     // 注册服务
@@ -37,6 +41,10 @@ public class ServiceProvider {
     // 获取服务实例
     public Object getService(String interfaceName) {
         return interfaceProvider.get(interfaceName);
+    }
+
+    public RateLimitProvider getRateLimitProvider() {
+        return this.rateLimitProvider;
     }
 
 

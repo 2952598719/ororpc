@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import Server.provider.ServiceProvider;
+import Server.ratelimit.RateLimit;
+import Server.ratelimit.provider.RateLimitProvider;
 import common.Message.RpcRequest;
 import common.Message.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,6 +32,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     private RpcResponse getResponse(RpcRequest rpcRequest) {
         String interfaceName = rpcRequest.getInterfaceName();
+        // 首先判断限流
+        RateLimit rateLimit = serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
+        if(!rateLimit.getToken()) {     // 获取令牌失败则限流，降级服务
+            System.out.println("服务限流");
+            return RpcResponse.fail();
+        }
+
+        // 其次处理请求
         Object service = serviceProvider.getService(interfaceName);
         Method method = null;
         try {
