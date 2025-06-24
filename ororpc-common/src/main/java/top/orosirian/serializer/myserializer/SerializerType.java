@@ -1,7 +1,6 @@
 package top.orosirian.serializer.myserializer;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @AllArgsConstructor
 public enum SerializerType {
@@ -12,7 +11,6 @@ public enum SerializerType {
     HESSIAN_SERIALIZER(3, "HessianSerializer"),
     PROTOSTUFF_SERIALIZER(4, "ProtostuffSerializer"),
     ;
-
 
     public final int code;
 

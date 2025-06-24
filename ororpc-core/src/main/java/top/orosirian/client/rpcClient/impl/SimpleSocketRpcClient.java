@@ -40,5 +40,10 @@ public class SimpleSocketRpcClient implements RpcClient {
         }
         return response;
     }
+
+    @Override
+    public void close() {
+        // 没什么好关的
+    }
     
 }

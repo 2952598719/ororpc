@@ -1,5 +1,0 @@
-Hessian=top.orosirian.common.serializer.myserializer.HessianSerializer
-protobuf=top.orosirian.common.serializer.myserializer.ProtobufSerializer
-json=top.orosirian.common.serializer.myserializer.JsonSerializer
-kryo=top.orosirian.common.serializer.myserializer.KryoSerializer
-jdk=top.orosirian.common.serializer.myserializer.ObjectSerializer

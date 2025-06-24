@@ -71,5 +71,16 @@ public class NettyRpcClient implements RpcClient {
         }
         return RpcResponse.fail("请求失败");
     }
+
+    public void close() {
+        try {
+            if (eventLoopGroup != null) {
+                eventLoopGroup.shutdownGracefully().sync();
+            }
+        } catch (InterruptedException e) {
+            log.error("关闭 Netty 资源时发生异常: {}", e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+    }
     
 }

@@ -42,8 +42,8 @@ public class MyDecoder extends ByteToMessageDecoder {
         byte[] bytes = new byte[length];
         in.readBytes(bytes);
         log.debug("接受的数据: {}", Arrays.toString(bytes));
-        Object deserialize = serializer.deserialize(bytes, messageType);
-        out.add(deserialize);
+        Object obj = serializer.deserialize(bytes, messageType);
+        out.add(obj);
     }
     
 }

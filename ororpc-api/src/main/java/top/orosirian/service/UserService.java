@@ -10,6 +10,6 @@ public interface UserService {
     User getUserByUserId(Integer id);
 
     @Retryable
-    Integer insertUserId(User user);
+    Integer insertUser(User user);
     
 }

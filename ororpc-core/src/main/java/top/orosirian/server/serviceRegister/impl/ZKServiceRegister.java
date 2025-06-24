@@ -10,13 +10,13 @@ import top.orosirian.server.serviceRegister.ServiceRegister;
 
 public class ZKServiceRegister implements ServiceRegister {
 
-    private CuratorFramework client;    // ZK连接客户端
-
     private static final String ZK_PATH = "127.0.0.1:2181";
 
     private static final String ROOT_PATH = "MyRPC";
 
     private static final String RETRY_PATH = "CanRetry";
+
+    private CuratorFramework client;    // ZK连接客户端
 
     public ZKServiceRegister() {
         client = CuratorFrameworkFactory.builder()
@@ -30,7 +30,7 @@ public class ZKServiceRegister implements ServiceRegister {
     }
 
     @Override
-    public void registerService(String serviceName, InetSocketAddress serviceAddress, boolean canRetry) {
+    public void registerService(String serviceName, InetSocketAddress serviceAddress) {
         try {
             // zk理解成一个文件夹就好
             // 比如说先create一个/service，接着create一个/service/a，create一个/service/b，那么此时的结构就是service下有a和b两个节点

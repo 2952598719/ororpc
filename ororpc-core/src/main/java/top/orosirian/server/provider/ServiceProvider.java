@@ -29,12 +29,12 @@ public class ServiceProvider {
     }
 
     // 注册服务
-    public void provideServiceInterface(Object service, boolean canRetry) {
+    public void provideServiceInterface(Object service) {
         // 这个类可能会实现多个接口，把每个接口都注册一下，这样就都能调用到了
         Class<?>[] interfaceName = service.getClass().getInterfaces();
         for(Class<?> clazz : interfaceName) {
             interfaceProvider.put(clazz.getName(), service);    // 一方面注册到本机
-            serviceRegister.registerService(clazz.getName(), new InetSocketAddress(host, port), canRetry);
+            serviceRegister.registerService(clazz.getName(), new InetSocketAddress(host, port));
         }
     }
 

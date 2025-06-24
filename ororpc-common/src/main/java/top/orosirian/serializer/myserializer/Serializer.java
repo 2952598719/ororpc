@@ -19,6 +19,7 @@ public interface Serializer {
     }
 
     static class SerializerHolder {
+
         static Map<Integer, Serializer> SERIALIZER_MAP = createMap();
 
         private static Map<Integer, Serializer> createMap() {
@@ -30,6 +31,7 @@ public interface Serializer {
             map.put(SerializerType.PROTOSTUFF_SERIALIZER.code, new ProtostuffSerializer());
             return map;
         }
+        
     }
     
 }

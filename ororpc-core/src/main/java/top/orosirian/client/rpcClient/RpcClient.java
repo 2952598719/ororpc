@@ -6,5 +6,7 @@ import top.orosirian.message.RpcResponse;
 public interface RpcClient {
 
     RpcResponse sendRequest(RpcRequest request);
+
+    void close();
     
 }

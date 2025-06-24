@@ -49,7 +49,7 @@ public class ZKServiceCenter implements ServiceCenter {
     @Override
     public InetSocketAddress discoverService(String serviceName) {
         try {
-            List<String> addrList = cache.getServiceAddr(serviceName);
+            List<String> addrList = cache.getServiceAddrList(serviceName);
             if(addrList == null) {
                 addrList = client.getChildren().forPath("/" + serviceName);    // 得到/serviceName文件夹下的所有服务
                 for(String addr : addrList) {
@@ -91,6 +91,11 @@ public class ZKServiceCenter implements ServiceCenter {
 
     private String getServiceAddrString(InetSocketAddress serviceAddr) {
         return serviceAddr.getHostName() + ":" + serviceAddr.getPort();
+    }
+
+    @Override
+    public void close() {
+        client.close();
     }
     
 }

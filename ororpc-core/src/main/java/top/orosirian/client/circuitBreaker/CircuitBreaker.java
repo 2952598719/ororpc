@@ -17,23 +17,22 @@ public class CircuitBreaker {
 
     private final AtomicInteger successCount;
 
-    private final int FAILURE_THRESHOLD;        // CLOSE -> OPEN 失败次数阈值
+    private final int FAILURE_LIMIT;            // CLOSE -> OPEN 失败次数限制
 
-    private final long RETRY_INTERVAL;               // OPEN -> HALF_OPEN 恢复时间
+    private final long RETRY_INTERVAL;          // OPEN -> HALF_OPEN 恢复时间
 
     private final double HALF_OPEN_THRESHOLD;   // HALF_OPEN -> CLOSE 成功比例
 
     private long lastFailureTime;               // 上次失败时间
 
-    public CircuitBreaker(int failureThreshold, long retryInterval, double halfOpenThreshold) {
+    public CircuitBreaker(int failureLimit, long retryInterval, double halfOpenThreshold) {
         this.state = CircuitBreakerState.CLOSE;
         this.requestCount = new AtomicInteger(0);
         this.failureCount = new AtomicInteger(0);
         this.successCount = new AtomicInteger(0);
-        this.FAILURE_THRESHOLD = failureThreshold;
+        this.FAILURE_LIMIT = failureLimit;
         this.RETRY_INTERVAL = retryInterval;
         this.HALF_OPEN_THRESHOLD = halfOpenThreshold;
-        AtomicInteger requestCount = new AtomicInteger(0);
     }
 
     // 能否执行请求
@@ -86,7 +85,7 @@ public class CircuitBreaker {
         failureCount.incrementAndGet();
         switch(state) {
             case CLOSE:
-                if(failureCount.get() >= FAILURE_THRESHOLD) {
+                if(failureCount.get() >= FAILURE_LIMIT) {
                     state = CircuitBreakerState.OPEN;
                     log.error("失败次数已超过阈值，熔断器切换至开启状态");
                 }
@@ -111,5 +110,5 @@ public class CircuitBreaker {
 
 // 熔断器关闭、半开、打开
 enum CircuitBreakerState {
-    CLOSE, HALF_OPEN, OPEN
+    CLOSE, HALF_OPEN, OPEN;
 }

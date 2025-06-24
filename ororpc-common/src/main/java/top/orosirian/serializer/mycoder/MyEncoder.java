@@ -10,6 +10,7 @@ import top.orosirian.message.RpcRequest;
 import top.orosirian.message.RpcResponse;
 import top.orosirian.serializer.myserializer.Serializer;
 
+@SuppressWarnings("rawtypes")
 @Slf4j
 @AllArgsConstructor
 public class MyEncoder extends MessageToByteEncoder {
@@ -18,7 +19,7 @@ public class MyEncoder extends MessageToByteEncoder {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-            log.debug("正在编码消息类型: {}", msg.getClass());
+        log.debug("正在编码的消息类型: {}", msg.getClass());
         // 0.得到数据
         byte[] serializeBytes = serializer.serialize(msg);
         if(serializeBytes == null || serializeBytes.length == 0) {

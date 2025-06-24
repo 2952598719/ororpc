@@ -11,6 +11,7 @@ import top.orosirian.serializer.myserializer.SerializerUtil;
 public class ProtostuffSerializer implements Serializer {
 
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public byte[] serialize(Object obj) {
         if (obj == null) {
@@ -24,6 +25,7 @@ public class ProtostuffSerializer implements Serializer {
         return bytes;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Object deserialize(byte[] bytes, int messageType) {
         if (bytes == null || bytes.length == 0) {

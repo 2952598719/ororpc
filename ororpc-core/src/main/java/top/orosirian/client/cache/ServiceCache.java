@@ -11,17 +11,18 @@ import java.util.Map;
 @Slf4j
 public class ServiceCache {
 
+    // 服务名 -> 服务addr列表
     private final Map<String, List<String>> cache = new HashMap<>();
 
-    public void addService(String serviceName, String address) {
+    public void addService(String serviceName, String addr) {
         List<String> addrList = cache.getOrDefault(serviceName, new ArrayList<>());
-        addrList.add(address);
+        addrList.add(addr);
         cache.put(serviceName, addrList);
-        log.info("将name为{}和地址为{}的服务添加到本地缓存中", serviceName, address);
+        log.info("将name为{}和地址为{}的服务添加到本地缓存中", serviceName, addr);
     }
 
     public void replaceServiceAddr(String serviceName, String oldAddr, String newAddr) {
-        if(cache.containsKey(serviceName)) {
+        if(cache.containsKey(serviceName) && cache.get(serviceName).contains(oldAddr)) {
             List<String> addrList = cache.get(serviceName);
             addrList.remove(oldAddr);   // 服务数量导致的查询时间相比于其他时间一般不会太多，因此O(n)可以容忍
             addrList.add(newAddr);
@@ -31,7 +32,7 @@ public class ServiceCache {
         }
     }
 
-    public List<String> getServiceAddr(String serviceName) {
+    public List<String> getServiceAddrList(String serviceName) {
         if(cache.containsKey(serviceName)) {
             return cache.get(serviceName);
         } else {

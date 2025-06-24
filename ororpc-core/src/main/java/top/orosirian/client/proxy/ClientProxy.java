@@ -5,6 +5,7 @@ import top.orosirian.client.circuitBreaker.CircuitBreaker;
 import top.orosirian.client.circuitBreaker.CircuitBreakerProvider;
 import top.orosirian.client.retry.GuavaRetry;
 import top.orosirian.client.rpcClient.RpcClient;
+import top.orosirian.client.rpcClient.impl.NettyRpcClient;
 import top.orosirian.client.servicecenter.ServiceCenter;
 import top.orosirian.client.servicecenter.impl.ZKServiceCenter;
 import top.orosirian.message.RpcRequest;
@@ -13,7 +14,6 @@ import top.orosirian.message.RpcResponse;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.InetSocketAddress;
 
 @Slf4j
 public class ClientProxy implements InvocationHandler {
@@ -24,8 +24,8 @@ public class ClientProxy implements InvocationHandler {
 
     private final CircuitBreakerProvider circuitBreakerProvider;
 
-    public ClientProxy(RpcClient rpcClient) throws InterruptedException {
-        this.rpcClient = rpcClient;
+    public ClientProxy() throws InterruptedException {
+        this.rpcClient = new NettyRpcClient();
         this.serviceCenter = new ZKServiceCenter();
         this.circuitBreakerProvider = new CircuitBreakerProvider();
     }
@@ -95,6 +95,13 @@ public class ClientProxy implements InvocationHandler {
             }
         }
         return builder.toString();
+    }
+
+    public void close() {
+        rpcClient.close();
+        serviceCenter.close();
+        // CircuitBreakerProvider没有要关的，所以不写close。
+        // 这代码让人看得很烦躁，很想打人，有些地方写得很蠢
     }
     
 }
