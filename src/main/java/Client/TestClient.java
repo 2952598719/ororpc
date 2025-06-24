@@ -9,7 +9,7 @@ import common.service.UserService;
 
 public class TestClient {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ClientProxy clientProxy = new ClientProxy(getClient(0));
         UserService proxy = clientProxy.getProxy(UserService.class);
 
@@ -27,16 +27,20 @@ public class TestClient {
 
     private static RpcClient getClient(int type) {
         RpcClient rpcClient = null;
-        switch (type) {
-            case 0:
-                rpcClient = new NettyRpcClient();
-                break;
-            case 1:
-                rpcClient = new SimpleSocketRpcClient("127.0.0.1", 9999);
-                break;
-            default:
-                rpcClient = new NettyRpcClient();
-                break;
+        try {
+            switch (type) {
+                case 0:
+                    rpcClient = new NettyRpcClient();
+                    break;
+                case 1:
+                    rpcClient = new SimpleSocketRpcClient("127.0.0.1", 9999);
+                    break;
+                default:
+                    rpcClient = new NettyRpcClient();
+                    break;
+            }
+        } catch(InterruptedException e) {
+            e.printStackTrace();
         }
         return rpcClient;
     } 

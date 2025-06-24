@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@Builder    // 允许链式调用创建，避免在构造函数里写一长串
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {

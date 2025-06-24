@@ -2,11 +2,15 @@ package common.Message;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RpcRequest implements Serializable {
 
     private String interfaceName;   // 服务类的名字

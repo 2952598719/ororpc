@@ -27,7 +27,7 @@ public class NettyRpcClient implements RpcClient {
     
     private ServiceCenter serviceCenter;
 
-    public NettyRpcClient() {
+    public NettyRpcClient() throws InterruptedException {
         serviceCenter = new ZKServiceCenter();
     }
 
@@ -41,9 +41,9 @@ public class NettyRpcClient implements RpcClient {
 
     @Override
     public RpcResponse sendRequest(RpcRequest request) {
-        InetSocketAddress serviceAddress = serviceCenter.discoverService(request.getInterfaceName());
-        String host = serviceAddress.getHostName();
-        int port = serviceAddress.getPort();
+        InetSocketAddress addr = serviceCenter.discoverService(request.getInterfaceName());
+        String host = addr.getHostName();
+        int port = addr.getPort();
         try {
             // bootstrap.connect是个异步行为，所以返回ChannelFuture，在执行完成后可以通过.channel来获取连接
             // 所以要等待它创建完毕才能去获取channel，因此要使用.sync来同步（用人话说也就是阻塞在那，直到connect完毕）

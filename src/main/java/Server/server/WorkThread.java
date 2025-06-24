@@ -41,6 +41,8 @@ public class WorkThread implements Runnable {
         Object service = serviceProvider.getService(interfaceName);     // 得到服务端相应的实现类
         Method method = null;
         try {
+            // 服务器又不用隐藏调用细节，为什么还要用代理呢？
+            // 因为从传来点调用字符串，得到所要调用的方法，一看就得是代理
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsType());
             Object result = method.invoke(service, rpcRequest.getParams());
             return RpcResponse.success(result);
