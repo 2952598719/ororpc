@@ -1,6 +1,7 @@
 package top.orosirian.client.proxy;
 
 import lombok.extern.slf4j.Slf4j;
+import top.orosirian.Utils;
 import top.orosirian.client.circuitBreaker.CircuitBreaker;
 import top.orosirian.client.circuitBreaker.CircuitBreakerProvider;
 import top.orosirian.client.retry.GuavaRetry;
@@ -40,14 +41,14 @@ public class ClientProxy implements InvocationHandler {
                                         .paramsType(method.getParameterTypes())
                                         .build();
         // 2.获取熔断器
-        CircuitBreaker circuitBreaker = circuitBreakerProvider.getCircuitBreaker(method.getName());
+        String methodSignature = Utils.getMethodSignature(method.getDeclaringClass(), method);
+        CircuitBreaker circuitBreaker = circuitBreakerProvider.getCircuitBreaker(methodSignature);
         if(!circuitBreaker.allowRequest()) {
             log.warn("熔断器开启，请求被拒绝: {}", request);
             return null;
         }
         // 3.数据传输
         RpcResponse response;
-        String methodSignature = getMethodSignature(request.getInterfaceName(), method);
         log.info("方法签名: {}", methodSignature);
         if(serviceCenter.checkRetry(request.getInterfaceName())) {
             try {
